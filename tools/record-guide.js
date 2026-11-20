@@ -15,6 +15,29 @@ const pf = window.pixelforge;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
+let fontCss = null;
+/** A picture made from an SVG cannot fetch files, so the web font of the page goes in as data. The Latin part is enough. */
+async function inlineFonts() {
+  if (fontCss !== null) return fontCss;
+  fontCss = '';
+  for (const sheet of document.styleSheets) {
+    let rules = [];
+    try { rules = [...sheet.cssRules]; } catch { /* cross-origin sheet */ }
+    for (const rule of rules) {
+      if (!(rule instanceof CSSFontFaceRule)) continue;
+      const range = rule.style.getPropertyValue('unicode-range');
+      if (range && !/U\+0000-00FF/i.test(range)) continue;
+      const m = /url\(["']?([^"')]+)["']?\)/.exec(rule.style.getPropertyValue('src'));
+      if (!m) continue;
+      const buf = new Uint8Array(await (await fetch(new URL(m[1], sheet.href || location.href))).arrayBuffer());
+      let bin = '';
+      for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
+      fontCss += `@font-face{font-family:${rule.style.getPropertyValue('font-family')};font-weight:${rule.style.getPropertyValue('font-weight') || 'normal'};src:url(data:font/woff2;base64,${btoa(bin)}) format("woff2");}\n`;
+    }
+  }
+  return fontCss;
+}
+
 /** A picture of the whole page as it looks right now. */
 export async function snap() {
   pf.renderView();
@@ -48,8 +71,8 @@ export async function snap() {
     }
   });
   clone.setAttribute('style', `width:${W}px;height:${H}px;margin:0;overflow:hidden;`);
-  let css = '';
-  for (const sheet of document.styleSheets) { try { for (const rule of sheet.cssRules) css += rule.cssText + '\n'; } catch { /* cross-origin sheet */ } }
+  let css = await inlineFonts();
+  for (const sheet of document.styleSheets) { try { for (const rule of sheet.cssRules) if (!(rule instanceof CSSFontFaceRule)) css += rule.cssText + '\n'; } catch { /* cross-origin sheet */ } }
   const xml = new XMLSerializer().serializeToString(clone);
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><foreignObject x="0" y="0" width="${W}" height="${H}"><style xmlns="http://www.w3.org/1999/xhtml">${esc(css)}</style>${xml}</foreignObject></svg>`;
   const img = new Image();
@@ -58,7 +81,7 @@ export async function snap() {
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const g = cv.getContext('2d');
-  g.fillStyle = '#0d0f14';
+  g.fillStyle = '#161617';
   g.fillRect(0, 0, W, H);
   g.drawImage(img, 0, 0);
   return cv;
@@ -78,7 +101,7 @@ function annotate(cv, caption, target) {
     g.shadowBlur = 0;
   }
   if (caption) {
-    g.font = '600 17px "Segoe UI", system-ui, sans-serif';
+    g.font = '600 17px "Inter Variable", "Segoe UI", system-ui, sans-serif';
     const tw = Math.min(W - 40, g.measureText(caption).width + 36);
     const x = (W - tw) / 2, y = H - 54;
     g.fillStyle = 'rgba(10,12,18,.92)';

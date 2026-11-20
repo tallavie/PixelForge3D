@@ -1,3 +1,4 @@
+import '@fontsource-variable/inter/index.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { TransformControls } from 'three/addons/controls/TransformControls.js';
@@ -66,7 +67,7 @@ container.add(motion);
 scene.add(container);
 const helpers = new THREE.Group();
 scene.add(helpers);
-const grid = new THREE.GridHelper(6, 12, 0x566078, 0x2c3140);
+const grid = new THREE.GridHelper(6, 12, 0x5a5a60, 0x2c2c2e);
 helpers.add(grid);
 const skel = new THREE.Group();
 skel.visible = false;
@@ -80,7 +81,7 @@ const target = new THREE.Vector3(0, 1, 0);
 const viewCanvas = $('view3d');
 const viewRenderer = new THREE.WebGLRenderer({ canvas: viewCanvas, antialias: true });
 viewRenderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
-viewRenderer.setClearColor(0x14161c);
+viewRenderer.setClearColor(0x0f0f10);
 const viewCam = new THREE.PerspectiveCamera(32, 1, 0.1, 300);
 viewCam.position.set(3.2, 2.2, 6.2);
 const orbit = new OrbitControls(viewCam, viewCanvas);
@@ -809,9 +810,9 @@ function rebuildStrip() {
   strip = { n, next: 0, tw, th, pitch, gutter, dirs, gap, yaws };
   if (gutter) {
     const ctx = stripCanvas.getContext('2d');
-    ctx.font = '600 11px "Segoe UI", sans-serif';
+    ctx.font = '600 11px "Inter Variable", "Segoe UI", sans-serif';
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#dfe5f0';
+    ctx.fillStyle = '#f5f5f7';
     yaws.forEach((yaw, d) => ctx.fillText(facingName(yaw), 3, d * (th + gap) + th / 2));
   }
   $('track').style.marginLeft = `${gutter}px`;
