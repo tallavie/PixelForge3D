@@ -1,0 +1,25 @@
+{
+  "name": "pixelforge3d",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Turn a 3D model and its animations into a pixel-art sprite sheet, in the browser.",
+  "license": "GPL-3.0",
+  "homepage": "https://tallavie.github.io/PixelForge3D/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tallavie/PixelForge3D.git"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "fflate": "^0.8.3",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8"
+  }
+}
