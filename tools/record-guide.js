@@ -176,8 +176,8 @@ class Film {
   async shot(caption, target, ms = 1600, frame = null) {
     await sleep(60);
     pf.settle(frame ?? pf.frame);
-    // the strip of thumbnails fills in a little at a time; several directions need longer
-    await sleep(pf.state.view.dirs > 1 ? 1100 : 380);
+    pf.fillStrip();   // the strip of thumbnails normally fills in a few per tick
+    await sleep(50);
     this.frames.push({ canvas: annotate(await snap(), caption, target), ms });
   }
   /** A few frames of the current animation playing. */

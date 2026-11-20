@@ -1858,6 +1858,8 @@ init();
 window.pixelforge = {
   state, scene, generate, openFiles, selectFrame, applyPreset, applyShadeStyle, setCurrent,
   renderView: () => { orbit.update(); viewRenderer.render(scene, viewCam); },
+  // draw every thumbnail of the frame strip now instead of a few per tick
+  fillStrip: () => { for (let g = 0; g < 5000 && strip.next < strip.n * strip.dirs; g++) stripStep(); },
   orbit,
   grab: (i = 0) => { const c = current.cells[i]; beginCapture(); applyFrustum(); const px = captureFrame(current, c.t, state.view.yaw, c.offsets); endCapture(); return px; },
   refresh: (level = 3) => { syncUI(); invalidate(level); },
