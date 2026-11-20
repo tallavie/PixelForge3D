@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PixelForge 3D — how to make a sprite sheet</title>
+  <meta name="description" content="Five short steps from a 3D model to a pixel-art sprite sheet for Unreal Engine." />
+  <style>
+    :root { --bg: #0d0f14; --panel: #171a22; --line: #2a2f3d; --text: #e6ebf5; --mute: #98a2b8; --accent: #ffb347; --ink: #201400; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 "Segoe UI", system-ui, -apple-system, sans-serif; }
+    a { color: var(--accent); }
+    header { border-bottom: 1px solid var(--line); background: var(--panel); }
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+    header .wrap { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-top: 14px; padding-bottom: 14px; }
+    .brand { font-weight: 700; font-size: 18px; margin-right: auto; }
+    .brand span { color: var(--accent); }
+    .btn { display: inline-block; text-decoration: none; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--line); color: var(--text); background: #1f232e; }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--ink); font-weight: 600; }
+    h1 { font-size: clamp(26px, 5vw, 38px); line-height: 1.2; margin: 40px 0 8px; }
+    .lead { color: var(--mute); max-width: 62ch; margin: 0 0 8px; }
+    nav.steps { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 8px; padding: 0; }
+    nav.steps a { text-decoration: none; color: var(--text); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+    nav.steps a:hover { border-color: var(--accent); }
+    section { padding: 34px 0 6px; border-top: 1px solid var(--line); margin-top: 34px; }
+    section h2 { font-size: 23px; margin: 0 0 6px; }
+    section h2 b { color: var(--accent); margin-right: 8px; }
+    section p { margin: 0 0 14px; max-width: 70ch; color: #c9d1e2; }
+    section ul { margin: 0 0 16px; padding-left: 20px; color: #c9d1e2; max-width: 70ch; }
+    img.film { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 10px; background: #000; }
+    footer { color: var(--mute); font-size: 14px; padding: 40px 0 60px; margin-top: 40px; border-top: 1px solid var(--line); }
+    code { background: #1f232e; padding: 1px 6px; border-radius: 4px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="brand">PixelForge <span>3D</span></div>
+      <a class="btn" href="https://github.com/tallavie/PixelForge3D">Source on GitHub</a>
+      <a class="btn primary" href="../">Open the app</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>From a 3D model to a sprite sheet</h1>
+    <p class="lead">Five short steps. Everything runs in your browser and your models never leave your computer. The recordings use the two demo models that are built into the app.</p>
+    <nav class="steps" aria-label="Steps">
+      <a href="#model">1 · Model</a><a href="#camera">2 · Camera</a><a href="#style">3 · Look</a><a href="#timeline">4 · Frames and poses</a><a href="#export">5 · Export</a>
+    </nav>
+
+    <section id="model">
+      <h2><b>1</b>Load a model and choose its animations</h2>
+      <p>Press <b>Open model</b> or drop the files on the page: GLB, GLTF, FBX or OBJ, with their textures. The model appears in the 3D view and as pixel art beside it.</p>
+      <ul>
+        <li>Click an animation name to preview it.</li>
+        <li>Tick the animations you want in the sheet and set how many frames each one gets.</li>
+        <li>Animations kept in separate files can be added if they use the same skeleton.</li>
+      </ul>
+      <img class="film" src="1-model.gif" width="1100" height="680" alt="Loading the demo item and the demo character, then previewing the Walk animation" />
+    </section>
+
+    <section id="camera">
+      <h2><b>2</b>Pick the angle and the number of directions</h2>
+      <p>Under <b>Camera &amp; light</b>, choose the side the sprite is drawn from. Top-down and isometric views come in four or eight directions, and each direction gets its own row of frames.</p>
+      <ul>
+        <li>For any other angle, orbit the 3D view and press <b>Use this view for the sprite</b>.</li>
+        <li>The light keeps its place relative to the camera, so every direction is lit the same way.</li>
+      </ul>
+      <img class="film" src="2-camera.gif" width="1100" height="680" loading="lazy" alt="Switching between front, back, top-down with four directions, isometric and eight directions" />
+    </section>
+
+    <section id="style">
+      <h2><b>3</b>Choose the look</h2>
+      <p><b>Shading style</b> switches the whole look at once: the number of tones per colour, the size of the shadows, the outline and the number of colors.</p>
+      <ul>
+        <li><b>Fire Red</b>: four tones, large shadows, a light checkerboard where two tones meet. 64×64.</li>
+        <li><b>DS</b>: three tones and small clean shadows.</li>
+        <li><b>Game Boy Color</b>: two tones and a black outline.</li>
+        <li><b>Soft HD</b>: six tones, for sprites of 128 pixels and up.</li>
+      </ul>
+      <p>Then pick a size and, if you like, fine-tune the shadow area, highlights, hue shift and dithering. The classic 8-bit, 16-bit and 32-bit styles with fixed palettes are in the same panel.</p>
+      <img class="film" src="3-style.gif" width="1100" height="680" loading="lazy" alt="Switching between the four shading styles, changing the sprite size and the shadow area" />
+    </section>
+
+    <section id="timeline">
+      <h2><b>4</b>Adjust frames and poses</h2>
+      <p>Every exported frame sits on the timeline under the views. Select a frame to move it in time, hold it longer, duplicate it or delete it.</p>
+      <ul>
+        <li>Turn on <b>Pose mode</b>, pick a joint in the 3D view or in the list, and rotate it. The change stays on the selected frame.</li>
+        <li><b>Save pose</b> keeps the current pose as a sprite of its own.</li>
+      </ul>
+      <img class="film" src="4-timeline.gif" width="1100" height="680" loading="lazy" alt="Selecting a frame, holding and duplicating it, then rotating an arm bone on that frame" />
+    </section>
+
+    <section id="export">
+      <h2><b>5</b>Create the sprite sheet</h2>
+      <p>Press <b>Create sprite sheet</b>. <b>Download all</b> gives a ZIP with:</p>
+      <ul>
+        <li>the sheet as a PNG, and one strip per animation;</li>
+        <li>a <code>.paper2dsprites</code> file that Unreal Engine imports as one sprite per frame;</li>
+        <li>a JSON file describing every animation, and the palette;</li>
+        <li>optionally a normal-map sheet, so the sprites react to lights in the game;</li>
+        <li>a readme with the import steps for that export.</li>
+      </ul>
+      <img class="film" src="5-export.gif" width="1100" height="680" loading="lazy" alt="Creating the sprite sheet and the download buttons" />
+    </section>
+
+    <footer>
+      PixelForge 3D is free software under the GPL-3.0 licence. No game assets are included, and it is not affiliated with any game company.
+      <br /><a href="../">Open the app</a> · <a href="https://github.com/tallavie/PixelForge3D">Source and issues on GitHub</a>
+    </footer>
+  </main>
+</body>
+</html>

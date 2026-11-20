@@ -1857,6 +1857,8 @@ init();
 // handy for debugging from the console
 window.pixelforge = {
   state, scene, generate, openFiles, selectFrame, applyPreset, applyShadeStyle, setCurrent,
+  renderView: () => { orbit.update(); viewRenderer.render(scene, viewCam); },
+  orbit,
   grab: (i = 0) => { const c = current.cells[i]; beginCapture(); applyFrustum(); const px = captureFrame(current, c.t, state.view.yaw, c.offsets); endCapture(); return px; },
   refresh: (level = 3) => { syncUI(); invalidate(level); },
   // run everything that is pending right now and draw one frame (the page may be in the background, where timers stall)

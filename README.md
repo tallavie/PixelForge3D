@@ -7,6 +7,32 @@ Load a model, pick the animations and the camera angle, choose a look, and expor
 
 Everything runs on your own computer. Models are never uploaded anywhere.
 
+![Switching between the four shading styles](public/guide/3-style.gif)
+
+## How to use it
+
+The same five steps, with all the recordings on one page: https://tallavie.github.io/PixelForge3D/guide/
+
+1. **Load a model and choose its animations.**
+
+   ![Loading a model and previewing an animation](public/guide/1-model.gif)
+
+2. **Pick the angle and the number of directions.**
+
+   ![Front, back, top-down and isometric views in 1, 4 or 8 directions](public/guide/2-camera.gif)
+
+3. **Choose the look** with Shading style, then the size (recording above).
+
+4. **Adjust frames and poses** on the timeline.
+
+   ![Holding and duplicating a frame, then posing an arm](public/guide/4-timeline.gif)
+
+5. **Create the sprite sheet** and download the ZIP.
+
+   ![The finished sprite sheet and the download buttons](public/guide/5-export.gif)
+
+The recordings are made from the running app by `tools/record-guide.js`.
+
 ## What it does
 
 - **Models:** GLB / GLTF (Draco and Meshopt included), FBX and OBJ, with their skeleton and animations. Drop the files on the page. GLB is the format it has been tested with most.
@@ -81,3 +107,5 @@ If you convert models from a game, the rights to those models stay with their ow
   | `src/loaders.js` | Model loading |
   | `src/exporter.js` | Sprite sheet, Paper2D file, ZIP |
   | `src/presets.js` | Palettes, styles, shading styles, recommended sizes |
+  | `public/guide/` | The how-to page of the site and its recordings |
+  | `tools/` | Development only: records the how-to GIFs from the running app |

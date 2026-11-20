@@ -14,3 +14,6 @@ public/_test/
 # local tooling
 .claude/
 *.log
+
+# recordings before they are copied to public/guide/
+guide-out/
