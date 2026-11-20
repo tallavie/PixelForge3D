@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/icon.svg" />
+  <title>PixelForge 3D — how to make a sprite sheet</title>
+  <meta name="description" content="Five short steps from a 3D model to a pixel-art sprite sheet for Unreal Engine." />
+  <link rel="stylesheet" href="/src/site.css" />
+</head>
+<body>
+  <header><div class="wrap">
+    <a class="brand" href="../" title="PixelForge 3D home page"><span class="logo"></span><span>PixelForge <b>3D</b></span></a>
+    <nav><a href="../">Home page</a><a href="https://github.com/tallavie/PixelForge3D">Source on GitHub</a></nav>
+    <a class="btn sm" href="../app/">Open the app</a>
+  </div></header>
+
+  <main class="wrap guide">
+    <div class="top">
+      <div class="kicker">Guide</div>
+      <h1>From a 3D model to a sprite sheet</h1>
+      <p class="lead">Five short steps. Everything runs in your browser and your models never leave your computer. The recordings use the two demo models that are built into the app.</p>
+      <nav class="steps" aria-label="Steps">
+        <a href="#model">1 · Model</a><a href="#camera">2 · Camera</a><a href="#style">3 · Look</a><a href="#timeline">4 · Frames and poses</a><a href="#export">5 · Export</a>
+      </nav>
+    </div>
+
+    <section class="step" id="model">
+      <h2><b>1</b>Load a model and choose its animations</h2>
+      <p>Press <b>Open model</b> or drop the files on the page: GLB, GLTF, FBX or OBJ, with their textures. The model appears in the 3D view and as pixel art beside it.</p>
+      <ul>
+        <li>Click an animation name to preview it.</li>
+        <li>Tick the animations you want in the sheet and set how many frames each one gets.</li>
+        <li>Animations kept in separate files can be added if they use the same skeleton.</li>
+      </ul>
+      <img class="film" src="/guide/1-model.gif" width="1100" height="680" alt="Loading the demo item and the demo character, then previewing the Walk animation" />
+    </section>
+
+    <section class="step" id="camera">
+      <h2><b>2</b>Pick the angle and the number of directions</h2>
+      <p>Under <b>Camera &amp; light</b>, choose the side the sprite is drawn from. Top-down and isometric views come in four or eight directions, and each direction gets its own row of frames.</p>
+      <ul>
+        <li>For any other angle, orbit the 3D view and press <b>Use this view for the sprite</b>.</li>
+        <li>The light keeps its place relative to the camera, so every direction is lit the same way.</li>
+      </ul>
+      <img class="film" src="/guide/2-camera.gif" width="1100" height="680" loading="lazy" alt="Switching between front, back, top-down with four directions, isometric and eight directions" />
+    </section>
+
+    <section class="step" id="style">
+      <h2><b>3</b>Choose the look</h2>
+      <p><b>Shading style</b> switches the whole look at once: the number of tones per colour, the size of the shadows, the outline and the number of colors.</p>
+      <ul>
+        <li><b>Fire Red</b>: four tones, large shadows, a light checkerboard where two tones meet. 64×64.</li>
+        <li><b>DS</b>: three tones and small clean shadows.</li>
+        <li><b>Game Boy Color</b>: two tones and a black outline.</li>
+        <li><b>Soft HD</b>: six tones, for sprites of 128 pixels and up.</li>
+      </ul>
+      <p>Then pick a size and, if you like, fine-tune the shadow area, highlights, hue shift and dithering. The classic 8-bit, 16-bit and 32-bit styles with fixed palettes are in the same panel.</p>
+      <img class="film" src="/guide/3-style.gif" width="1100" height="680" loading="lazy" alt="Switching between the four shading styles, changing the sprite size and the shadow area" />
+    </section>
+
+    <section class="step" id="timeline">
+      <h2><b>4</b>Adjust frames and poses</h2>
+      <p>Every exported frame sits on the timeline under the views. Select a frame to move it in time, hold it longer, duplicate it or delete it.</p>
+      <ul>
+        <li>Turn on <b>Pose mode</b>, pick a joint in the 3D view or in the list, and rotate it. The change stays on the selected frame.</li>
+        <li><b>Save pose</b> keeps the current pose as a sprite of its own.</li>
+      </ul>
+      <img class="film" src="/guide/4-timeline.gif" width="1100" height="680" loading="lazy" alt="Selecting a frame, holding and duplicating it, then rotating an arm bone on that frame" />
+    </section>
+
+    <section class="step" id="export">
+      <h2><b>5</b>Create the sprite sheet</h2>
+      <p>Press <b>Create sprite sheet</b>. <b>Download all</b> gives a ZIP with:</p>
+      <ul>
+        <li>the sheet as a PNG, and one strip per animation;</li>
+        <li>a <code>.paper2dsprites</code> file that Unreal Engine imports as one sprite per frame;</li>
+        <li>a JSON file describing every animation, and the palette;</li>
+        <li>optionally a normal-map sheet, so the sprites react to lights in the game;</li>
+        <li>a readme with the import steps for that export.</li>
+      </ul>
+      <img class="film" src="/guide/5-export.gif" width="1100" height="680" loading="lazy" alt="Creating the sprite sheet and the download buttons" />
+      <p class="more"><a class="btn" href="../app/">Open the app</a></p>
+    </section>
+  </main>
+
+  <footer><div class="wrap">
+    <span>PixelForge 3D is free software under the GPL-3.0 licence. No game assets are included, and it is not affiliated with any game company.</span>
+    <span><a href="../">Home page</a> · <a href="../app/">Open the app</a> · <a href="https://github.com/tallavie/PixelForge3D">Source and issues on GitHub</a></span>
+  </div></footer>
+</body>
+</html>

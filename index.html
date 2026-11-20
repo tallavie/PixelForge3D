@@ -9,157 +9,31 @@
 <meta property="og:description" content="Turn a 3D model and its animations into a pixel-art sprite sheet, in your browser.">
 <meta property="og:image" content="https://tallavie.github.io/PixelForge3D/img/app.png">
 <link rel="icon" href="/icon.svg">
-<style>
-/* the app's own colours (src/styles.css) */
-:root {
-  --bg: #14161c; --panel: #1b1e27; --panel2: #232733; --ink: #dde2ee; --muted: #8791a8; --line: #2f3443;
-  --accent: #ffb23e; --accent-ink: #231600; --blue: #5cc8ff;
-}
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 64px; }
-body { margin: 0; font: 15px/1.55 system-ui, "Segoe UI", Arial, sans-serif; background: var(--bg); color: var(--ink); }
-a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
-img { max-width: 100%; display: block; height: auto; }
-.wrap { max-width: 1160px; margin: 0 auto; padding: 0 16px; }
-
-/* header: like the app's */
-header { position: sticky; top: 0; z-index: 10; background: var(--panel); border-bottom: 1px solid var(--line); }
-header .wrap { display: flex; align-items: center; gap: 14px; height: 56px; }
-.brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 16px; color: var(--ink); white-space: nowrap; }
-.brand:hover { text-decoration: none; }
-.brand b { color: var(--accent); }
-.logo { width: 20px; height: 20px; background:
-  linear-gradient(var(--accent), var(--accent)) 0 0 / 10px 10px no-repeat,
-  linear-gradient(var(--blue), var(--blue)) 10px 10px / 10px 10px no-repeat,
-  linear-gradient(#fff, #fff) 10px 0 / 5px 5px no-repeat, #3a4054; }
-header nav { display: flex; gap: 2px; margin-left: auto; }
-header nav a { color: var(--ink); padding: 6px 11px; border-radius: 8px; font-size: 14px; }
-header nav a:hover { background: var(--bg); text-decoration: none; }
-.btn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 600; padding: 8px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel2); color: var(--ink); cursor: pointer; white-space: nowrap; }
-.btn:hover { border-color: var(--accent); text-decoration: none; }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.btn.primary:hover { filter: brightness(1.08); }
-.btn.big { font-size: 17px; padding: 13px 24px; border-radius: 10px; }
-header .btn { padding: 6px 14px; }
-
-/* hero */
-.hero { padding: 64px 0 40px; text-align: center; }
-.hero h1 { font-size: clamp(32px, 6vw, 56px); line-height: 1.1; margin: 0 0 14px; letter-spacing: -.02em; text-wrap: balance; }
-.hero h1 span { color: var(--accent); }
-.hero p.lead { font-size: clamp(17px, 2.2vw, 20px); color: var(--muted); max-width: 700px; margin: 0 auto 28px; }
-.cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-.meta { margin-top: 16px; color: var(--muted); font-size: 13px; display: flex; gap: 6px 18px; justify-content: center; flex-wrap: wrap; }
-.window { margin: 44px auto 0; max-width: 1080px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); box-shadow: 0 24px 60px rgba(0,0,0,.45); }
-.window .bar { display: flex; gap: 6px; padding: 9px 12px; border-bottom: 1px solid var(--line); }
-.window .bar i { width: 11px; height: 11px; border-radius: 50%; background: var(--line); }
-.window img { width: 100%; }
-
-/* sections */
-section { padding: 56px 0; }
-.kicker { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
-h2 { font-size: clamp(26px, 3.6vw, 34px); margin: 0 0 10px; letter-spacing: -.01em; }
-.sub { color: var(--muted); margin: 0 0 28px; max-width: 720px; }
-.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
-.grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-.feature .ic { font-size: 22px; width: 42px; height: 42px; border-radius: 10px; background: var(--panel2); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
-.feature h3 { margin: 0 0 4px; font-size: 16px; }
-.feature p { margin: 0; color: var(--muted); font-size: 14px; }
-
-/* a sprite strip made by the app, played frame by frame */
-.spr {
-  --rows: 1; --row: 0;
-  flex: none;
-  width: calc(var(--cw) * var(--k) * 1px); height: calc(var(--ch) * var(--k) * 1px);
-  background-repeat: no-repeat;
-  background-size: calc(var(--cw) * var(--n) * var(--k) * 1px) calc(var(--ch) * var(--rows) * var(--k) * 1px);
-  background-position: 0 calc(var(--ch) * var(--row) * var(--k) * -1px);
-  image-rendering: pixelated;
-  animation: play calc(var(--n) / var(--fps) * 1s) steps(var(--n)) infinite;
-}
-@keyframes play { to { background-position-x: calc(var(--cw) * var(--n) * var(--k) * -1px); } }
-.s-firered { background-image: url(/img/look-firered.png); }
-.s-ds { background-image: url(/img/look-ds.png); }
-.s-gbc { background-image: url(/img/look-gbc.png); }
-.s-soft { background-image: url(/img/look-soft.png); }
-.s-nes { background-image: url(/img/look-nes.png); }
-.s-gameboy { background-image: url(/img/look-gameboy.png); }
-.s-16bit { background-image: url(/img/look-16bit.png); }
-.s-32bit { background-image: url(/img/look-32bit.png); }
-.s-dirs { background-image: url(/img/dirs8.png); }
-
-.looks { display: grid; gap: 14px; grid-template-columns: repeat(4, 1fr); }
-.look { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
-.stage { height: 232px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--line);
-  background: repeating-conic-gradient(#20232d 0 25%, #1a1d25 0 50%) 0 0 / 24px 24px; }
-.look figcaption { padding: 12px 14px 14px; }
-.look b { display: block; font-size: 16px; }
-.look small { display: block; color: var(--accent); font-size: 12px; margin: 1px 0 6px; }
-.look span { color: var(--muted); font-size: 14px; }
-
-.dirs { display: grid; gap: 10px; grid-template-columns: repeat(8, 1fr); }
-.dir { margin: 0; background: repeating-conic-gradient(#20232d 0 25%, #1a1d25 0 50%) 0 0 / 24px 24px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; overflow: hidden; }
-.dir figcaption { font-size: 12px; font-weight: 600; color: var(--muted); }
-
-.gifs { display: grid; gap: 22px 18px; grid-template-columns: repeat(2, 1fr); }
-.gifs figure { margin: 0; }
-.gifs a { display: block; border-radius: 10px; border: 1px solid var(--line); overflow: hidden; background: #000; transition: border-color .15s; }
-.gifs a:hover { border-color: var(--accent); }
-.gifs img { width: 100%; }
-.gifs figcaption { margin-top: 10px; } .gifs figcaption b { display: block; } .gifs figcaption span { color: var(--muted); font-size: 14px; }
-.more { margin-top: 26px; }
-
-.two { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
-.panel h3 { margin: 0 0 8px; font-size: 17px; }
-.panel ul, .panel ol { margin: 0; padding-left: 20px; }
-.panel li { margin: 6px 0; }
-.panel p { margin: 12px 0 0; color: var(--muted); font-size: 14px; }
-code { font: 13px ui-monospace, Consolas, monospace; background: var(--bg); padding: 1px 6px; border-radius: 4px; }
-pre { margin: 10px 0 0; padding: 12px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; }
-pre code { padding: 0; background: none; }
-
-footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 13px; }
-footer .wrap { display: flex; gap: 12px 20px; justify-content: space-between; flex-wrap: wrap; }
-
-@media (max-width: 980px) {
-  .looks { grid-template-columns: repeat(2, 1fr); }
-  .dirs { grid-template-columns: repeat(4, 1fr); }
-}
-@media (max-width: 760px) {
-  header nav { display: none; }
-  header .btn { margin-left: auto; }
-  .two, .gifs { grid-template-columns: 1fr; }
-  section { padding: 40px 0; } .hero { padding: 40px 0 24px; }
-  .stage { height: 216px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .spr { animation: none; }
-}
-</style>
+<link rel="stylesheet" href="/src/site.css">
 </head>
 <body>
 <header><div class="wrap">
   <a class="brand" href="#"><span class="logo"></span><span>PixelForge <b>3D</b></span></a>
   <nav><a href="#looks">Looks</a><a href="#features">Features</a><a href="#see">See it work</a><a href="#export">Export</a><a href="#run">Run it yourself</a></nav>
-  <a class="btn primary" href="app/">▶ Open the app</a>
+  <a class="btn sm" href="app/">Open the app</a>
 </div></header>
 
 <div class="hero"><div class="wrap">
   <h1>Turn a 3D model into <span>pixel-art</span> sprites</h1>
   <p class="lead">PixelForge 3D is a free tool that draws a rigged 3D model and its animations as a pixel-art sprite sheet, ready for Unreal Engine. It runs in your browser, and your models never leave your computer.</p>
   <div class="cta">
-    <a class="btn primary big" href="app/">▶ Open the app</a>
-    <a class="btn big" href="guide/">How to use it</a>
-    <a class="btn big" href="https://github.com/tallavie/PixelForge3D">View the source</a>
+    <a class="btn" href="app/">Open the app</a>
+    <a class="go" href="guide/">How to use it</a>
+    <a class="go" href="https://github.com/tallavie/PixelForge3D">View the source</a>
   </div>
   <div class="meta"><span>Free and open source</span><span>Nothing to install</span><span>GLB · GLTF · FBX · OBJ</span><span>Two demo models inside</span></div>
-  <div class="window"><div class="bar"><i></i><i></i><i></i></div><img src="/img/app.png" alt="PixelForge 3D with the demo character: the 3D view, the pixel-art preview beside it and the frames of the walk animation below" width="1280" height="800"></div>
+  <div class="window"><img src="/img/app.png" alt="PixelForge 3D with the demo character: the 3D view, the pixel-art preview beside it and the frames of the walk animation below" width="1280" height="800"></div>
 </div></div>
 
 <section id="looks"><div class="wrap">
-  <div class="kicker">Looks</div>
+  <div class="head"><div class="kicker">Looks</div>
   <h2>One model, eight looks</h2>
-  <p class="sub">Every sprite here was made by the app from the same walk animation of the demo character. Only the look and the size were changed.</p>
+  <p class="sub">Every sprite here was made by the app from the same walk animation of the demo character. Only the look and the size were changed.</p></div>
   <div class="looks">
     <figure class="look"><div class="stage"><div class="spr s-firered" style="--cw:44;--ch:66;--n:9;--fps:10;--k:3" role="img" aria-label="The demo character walking, Fire Red look"></div></div>
       <figcaption><b>Fire Red</b><small>Game Boy Advance · 16 colours</small><span>Four tones per colour, large shadows and a light checkerboard where two tones meet.</span></figcaption></figure>
@@ -181,29 +55,29 @@ footer .wrap { display: flex; gap: 12px 20px; justify-content: space-between; fl
 </div></section>
 
 <section id="features"><div class="wrap">
-  <div class="kicker">Features</div>
+  <div class="head"><div class="kicker">Features</div>
   <h2>From the model to the sheet, in one place</h2>
-  <p class="sub">The 3D view and the pixel art stand side by side, so you see every change the moment you make it.</p>
+  <p class="sub">The 3D view and the pixel art stand side by side, so you see every change the moment you make it.</p></div>
   <div class="grid">
-    <div class="panel feature"><div class="ic">🧊</div><h3>Your own models</h3><p>GLB, GLTF, FBX and OBJ with their skeleton, animations and textures. Drop the files on the page.</p></div>
-    <div class="panel feature"><div class="ic">🎞</div><h3>Animations and frames</h3><p>Choose the clips, set how many frames each one gets and trim them. Hold, duplicate or delete any frame on the timeline.</p></div>
-    <div class="panel feature"><div class="ic">🦴</div><h3>Posing</h3><p>Rotate any bone, for one frame or for the whole model, and save a pose as a sprite of its own.</p></div>
-    <div class="panel feature"><div class="ic">🎥</div><h3>Camera and directions</h3><p>Front, back, side, top-down, isometric or the angle you are looking from, in 1, 4 or 8 directions.</p></div>
-    <div class="panel feature"><div class="ic">🎨</div><h3>Drawn, not shrunk</h3><p>Every base colour of the model gets its own ramp of tones, warmer in the light and cooler in the shadow, and each pixel picks a tone.</p></div>
-    <div class="panel feature"><div class="ic">👁</div><h3>Eyes and mouths</h3><p>Faces are captured a second time, much larger. Thin lines stay one pixel wide, and eyes are built from pupil, white and iris with a sparkle.</p></div>
-    <div class="panel feature"><div class="ic">🧱</div><h3>Materials</h3><p>Mark each material as body, eyes and mouth, glow or hidden, and tint it.</p></div>
-    <div class="panel feature"><div class="ic">🖌</div><h3>Palettes and finish</h3><p>Fixed palettes, dithering, outlines, inner lines, sharpening and two kinds of anti-aliasing.</p></div>
-    <div class="panel feature"><div class="ic">📏</div><h3>Sizes that fit</h3><p>Recommended sizes for characters, items, bosses and props in every look, or any size from 4 to 1080 pixels.</p></div>
-    <div class="panel feature"><div class="ic">💡</div><h3>Normal maps</h3><p>An extra sheet of surface directions, so the sprites react to the lights of your game.</p></div>
-    <div class="panel feature"><div class="ic">📦</div><h3>Made for Unreal Engine</h3><p>The sheet comes with a Paper2D file that turns it into one sprite per frame, and a readme with the import steps.</p></div>
-    <div class="panel feature"><div class="ic">🔒</div><h3>Stays on your computer</h3><p>Everything is done by your browser. No model, texture or sprite is uploaded anywhere.</p></div>
+    <div class="panel feature"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg></div><h3>Your own models</h3><p>GLB, GLTF, FBX and OBJ with their skeleton, animations and textures. Drop the files on the page.</p></div>
+    <div class="panel feature"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 5v14M16 5v14M3 10h5M3 14h5M16 10h5M16 14h5"/></svg></div><h3>Animations and frames</h3><p>Choose the clips, set how many frames each one gets and trim them. Hold, duplicate or delete any frame on the timeline.</p></div>
+    <div class="panel feature"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M12 7v7M6 9l6 2 6-2M12 14l-4 6M12 14l4 6"/></svg></div><h3>Posing</h3><p>Rotate any bone, for one frame or for the whole model, and save a pose as a sprite of its own.</p></div>
+    <div class="panel feature"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg></div><h3>Camera and directions</h3><p>Front, back, side, top-down, isometric or the angle you are looking from, in 1, 4 or 8 directions.</p></div>
+    <div class="panel feature"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg></div><h3>Drawn, not shrunk</h3><p>Every base colour of the model gets its own ramp of tones, warmer in the light and cooler in the shadow, and each pixel picks a tone.</p></div>
+    <div class="panel feature"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>Eyes and mouths</h3><p>Faces are captured a second time, much larger. Thin lines stay one pixel wide, and eyes are built from pupil, white and iris with a sparkle.</p></div>
+    <div class="panel feature"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 12l9 5 9-5M3 16l9 5 9-5"/></svg></div><h3>Materials</h3><p>Mark each material as body, eyes and mouth, glow or hidden, and tint it.</p></div>
+    <div class="panel feature"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3s6 6.2 6 11a6 6 0 0 1-12 0c0-4.8 6-11 6-11z"/></svg></div><h3>Palettes and finish</h3><p>Fixed palettes, dithering, outlines, inner lines, sharpening and two kinds of anti-aliasing.</p></div>
+    <div class="panel feature"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20L20 4M14 4h6v6M10 20H4v-6"/></svg></div><h3>Sizes that fit</h3><p>Recommended sizes for characters, items, bosses and props in every look, or any size from 4 to 1080 pixels.</p></div>
+    <div class="panel feature"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.900c.5.4.8 1 .8 1.600h5.400c0-.6.3-1.200.8-1.600A6 6 0 0 0 12 3z"/></svg></div><h3>Normal maps</h3><p>An extra sheet of surface directions, so the sprites react to the lights of your game.</p></div>
+    <div class="panel feature"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10M8 10l4 4 4-4M4 17v3h16v-3"/></svg></div><h3>Made for Unreal Engine</h3><p>The sheet comes with a Paper2D file that turns it into one sprite per frame, and a readme with the import steps.</p></div>
+    <div class="panel feature"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><h3>Stays on your computer</h3><p>Everything is done by your browser. No model, texture or sprite is uploaded anywhere.</p></div>
   </div>
 </div></section>
 
 <section id="directions"><div class="wrap">
-  <div class="kicker">Directions</div>
+  <div class="head"><div class="kicker">Directions</div>
   <h2>Eight directions from one walk cycle</h2>
-  <p class="sub">Pick top-down or isometric and the number of directions. Each direction gets its own row in the sheet, lit the same way.</p>
+  <p class="sub">Pick top-down or isometric and the number of directions. Each direction gets its own row in the sheet, lit the same way.</p></div>
   <div class="dirs">
     <figure class="dir"><div class="spr s-dirs" style="--cw:56;--ch:68;--n:9;--fps:10;--k:2;--rows:8;--row:0" role="img" aria-label="Walking toward the south"></div><figcaption>S</figcaption></figure>
     <figure class="dir"><div class="spr s-dirs" style="--cw:56;--ch:68;--n:9;--fps:10;--k:2;--rows:8;--row:1" role="img" aria-label="Walking toward the south-west"></div><figcaption>SW</figcaption></figure>
@@ -217,9 +91,9 @@ footer .wrap { display: flex; gap: 12px 20px; justify-content: space-between; fl
 </div></section>
 
 <section id="see"><div class="wrap">
-  <div class="kicker">See it work</div>
+  <div class="head"><div class="kicker">See it work</div>
   <h2>From model to sheet, recorded in the app</h2>
-  <p class="sub">Load a model, pick the angle, choose the look, adjust the frames and create the sheet. Click a recording to see it full size in the guide.</p>
+  <p class="sub">Load a model, pick the angle, choose the look, adjust the frames and create the sheet. Click a recording to see it full size in the guide.</p></div>
   <div class="gifs">
     <figure><a href="guide/#model"><img src="/guide/1-model.gif" alt="Loading the demo models and previewing the walk animation" loading="lazy" width="1100" height="680"></a>
       <figcaption><b>Load a model and choose its animations</b><span>Tick the animations you want and set how many frames each one gets.</span></figcaption></figure>
@@ -230,13 +104,13 @@ footer .wrap { display: flex; gap: 12px 20px; justify-content: space-between; fl
     <figure><a href="guide/#timeline"><img src="/guide/4-timeline.gif" alt="Holding and duplicating a frame, then rotating an arm bone" loading="lazy" width="1100" height="680"></a>
       <figcaption><b>Adjust frames and poses</b><span>Hold a frame longer, duplicate it, or turn a joint on that frame only.</span></figcaption></figure>
   </div>
-  <div class="more"><a class="btn" href="guide/">📘 The full guide, step by step</a></div>
+  <div class="more"><a class="btn quiet" href="guide/">The full guide, step by step</a></div>
 </div></section>
 
 <section id="export"><div class="wrap">
-  <div class="kicker">Export</div>
+  <div class="head"><div class="kicker">Export</div>
   <h2>What you get</h2>
-  <p class="sub">Press Create sprite sheet, then Download all. The ZIP holds everything for one model.</p>
+  <p class="sub">Press Create sprite sheet, then Download all. The ZIP holds everything for one model.</p></div>
   <div class="two">
     <div class="panel">
       <h3>In the ZIP</h3>
@@ -262,8 +136,8 @@ footer .wrap { display: flex; gap: 12px 20px; justify-content: space-between; fl
 </div></section>
 
 <section id="run"><div class="wrap">
-  <div class="kicker">Run it yourself</div>
-  <h2>Online or on your own computer</h2>
+  <div class="head"><div class="kicker">Run it yourself</div>
+  <h2>Online or on your own computer</h2></div>
   <div class="two">
     <div class="panel">
       <h3>Online</h3>
@@ -272,7 +146,7 @@ footer .wrap { display: flex; gap: 12px 20px; justify-content: space-between; fl
         <li>A 3D model with a skeleton and animations. GLB is the format it has been tested with most.</li>
         <li>No model yet? The app has a demo character and a demo item.</li>
       </ul>
-      <p><a class="btn primary" href="app/">▶ Open the app</a></p>
+      <p class="act"><a class="btn" href="app/">Open the app</a></p>
     </div>
     <div class="panel">
       <h3>From the source</h3>

@@ -100,7 +100,10 @@ If you convert models from a game, the rights to those models stay with their ow
   | File | What is in it |
   |---|---|
   | `index.html` | The home page of the site |
+  | `guide/index.html` | The how-to page of the site |
   | `app/index.html` | The page of the app |
+  | `src/site.css` | The look of the home page and the guide |
+  | `src/styles.css` | The look of the app |
   | `src/main.js` | The app: state, 3D view, timeline, materials panel, export |
   | `src/ramp.js` | Game-sprite shading: colour ramps, shading styles, the face pass and the eye builder, normal maps |
   | `src/pixel.js` | Classic pipeline: shrinking, palettes, dithering, outlines, anti-aliasing |
@@ -109,6 +112,6 @@ If you convert models from a game, the rights to those models stay with their ow
   | `src/loaders.js` | Model loading |
   | `src/exporter.js` | Sprite sheet, Paper2D file, ZIP |
   | `src/presets.js` | Palettes, styles, shading styles, recommended sizes |
-  | `public/guide/` | The how-to page of the site and its recordings |
+  | `public/guide/` | The recordings shown in the guide |
   | `public/img/` | Pictures of the home page: sprite strips made by the app from the demo character |
   | `tools/` | Development only: records the how-to GIFs from the running app |
