@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PixelForge 3D — the app</title>
+  <link rel="icon" href="/icon.svg" />
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../" title="PixelForge 3D home page"><span class="logo"></span>PixelForge <b>3D</b></a>
+    <button id="btnOpen" class="btn">Open model…</button>
+    <button id="btnDemoChar" class="btn ghost">Demo character</button>
+    <button id="btnDemoItem" class="btn ghost">Demo item</button>
+    <a class="btn ghost" href="../guide/" target="_blank" rel="noopener" title="Five short recordings: from a model to a sprite sheet">How to use</a>
+    <span class="hint">GLB · GLTF · FBX · OBJ — or drop files anywhere</span>
+    <span class="spacer"></span>
+    <button id="btnExport" class="btn primary">Create sprite sheet</button>
+    <input id="fileModel" type="file" accept=".glb,.gltf,.fbx,.obj,.bin,.png,.jpg,.jpeg,.webp,.tga" multiple hidden />
+    <input id="fileAnim" type="file" accept=".glb,.gltf,.fbx" multiple hidden />
+  </header>
+
+  <main>
+    <aside class="sidebar">
+      <details open>
+        <summary>Model</summary>
+        <div class="sec">
+          <div id="modelInfo" class="info">No model loaded.</div>
+          <label class="row"><span>Subject type</span>
+            <select data-bind="subject" id="selSubject"></select>
+          </label>
+          <label class="row" title="Many exported models mark solid materials as see-through, which draws far parts over near ones."><span>See-through</span>
+            <select data-bind="transparency">
+              <option value="auto">Auto-fix (recommended)</option>
+              <option value="solid">Everything solid</option>
+              <option value="cutout">Cut-out (hard edges)</option>
+              <option value="keep">Keep as in the file</option>
+            </select>
+          </label>
+          <div id="alphaNote" class="note" hidden></div>
+        </div>
+      </details>
+
+      <details id="matSection">
+        <summary>Materials <span id="matCount" class="badge"></span></summary>
+        <div class="sec">
+          <p class="note">What each part of the model is. Eyes and mouths stay crisp and unshaded; glowing parts (fire, lights) are drawn in their own colours without a black outline. Tint recolours a part.</p>
+          <div id="matList" class="list mats"></div>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Animations <span id="animCount" class="badge"></span></summary>
+        <div class="sec">
+          <div class="listhead"><span>Export</span><span class="grow">Name</span><span>Frames</span><span>Loop</span></div>
+          <div id="animList" class="list"></div>
+          <div id="trimRow" class="row2" hidden>
+            <label>Start (s)<input id="trimStart" type="number" step="0.01" min="0" /></label>
+            <label>End (s)<input id="trimEnd" type="number" step="0.01" min="0" /></label>
+          </div>
+          <div class="btnrow">
+            <button id="btnAddAnim" class="btn small">Add animation files…</button>
+            <button id="btnAllAnim" class="btn small ghost">All / none</button>
+          </div>
+          <label class="row"><span>Frame rate (fps)</span><input data-bind="anim.fps" type="number" min="1" max="60" step="1" /></label>
+          <label class="check"><input data-bind="anim.rootLock" type="checkbox" /> Keep in place (cancel root motion)</label>
+        </div>
+      </details>
+
+      <details>
+        <summary>Bones &amp; pose</summary>
+        <div class="sec">
+          <div id="noBones" class="info" hidden>This model has no bones. You can still rotate it with the camera angle.</div>
+          <div id="boneUI">
+            <label class="check strong"><input id="poseMode" type="checkbox" /> Pose mode (pick a joint in the 3D view)</label>
+            <label class="row"><span>Rotation goes to</span>
+              <select data-bind="pose.scope">
+                <option value="frame">This frame only</option>
+                <option value="all">Every frame of every animation</option>
+              </select>
+            </label>
+            <p class="note">Pick a frame on the timeline, then rotate bones. “Save pose” freezes the current frame as its own sprite.</p>
+            <input id="boneSearch" type="search" placeholder="Search bones…" />
+            <div id="boneList" class="list bones"></div>
+            <div id="boneSliders">
+              <div class="bonename" id="boneName">No bone selected</div>
+              <label class="row"><span>Rotate X</span><input id="rotX" type="range" min="-180" max="180" step="1" value="0" /><output id="rotXo">0°</output></label>
+              <label class="row"><span>Rotate Y</span><input id="rotY" type="range" min="-180" max="180" step="1" value="0" /><output id="rotYo">0°</output></label>
+              <label class="row"><span>Rotate Z</span><input id="rotZ" type="range" min="-180" max="180" step="1" value="0" /><output id="rotZo">0°</output></label>
+            </div>
+            <div class="btnrow">
+              <button id="btnResetBone" class="btn small ghost">Reset bone</button>
+              <button id="btnResetPose" class="btn small ghost">Reset all</button>
+            </div>
+            <div class="btnrow">
+              <button id="btnSavePose" class="btn small">Save pose</button>
+              <button id="btnPoseAnim" class="btn small">Animation from poses</button>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Camera &amp; light</summary>
+        <div class="sec">
+          <div id="anglePresets" class="chips"></div>
+          <label class="row"><span>Rotation</span><input data-bind="view.yaw" type="range" min="-180" max="180" step="1" /><output></output></label>
+          <label class="row"><span>Tilt</span><input data-bind="view.pitch" type="range" min="-30" max="90" step="1" /><output></output></label>
+          <div class="row"><span>Directions</span>
+            <div class="seg" data-seg="view.dirs"><button data-v="1">1</button><button data-v="4">4</button><button data-v="8">8</button></div>
+          </div>
+          <div class="btnrow">
+            <button id="btnMatchView" class="btn small" title="Make the sprite from the angle you are looking at in the 3D view">📷 Use 3D view angle</button>
+            <button id="btnLookCapture" class="btn small ghost" title="Move the 3D view to the sprite's angle">Show sprite angle</button>
+          </div>
+          <label class="row"><span>Zoom</span><input data-bind="view.zoom" type="range" min="0.5" max="2" step="0.01" /><output></output></label>
+          <label class="row"><span>Offset X (px)</span><input data-bind="view.offsetX" type="number" step="1" /></label>
+          <label class="row"><span>Offset Y (px)</span><input data-bind="view.offsetY" type="number" step="1" /></label>
+          <label class="row"><span>Shading</span>
+            <select data-bind="shading">
+              <option value="sprite">Sprite ramps (hand-drawn look)</option>
+              <option value="toon">Toon (cel bands)</option>
+              <option value="original">Original materials</option>
+              <option value="flat">Unlit (flat colors)</option>
+            </select>
+          </label>
+          <label class="row"><span>Light side</span><input data-bind="light.azimuth" type="range" min="-180" max="180" step="1" /><output></output></label>
+          <label class="row"><span>Light height</span><input data-bind="light.elevation" type="range" min="-20" max="90" step="1" /><output></output></label>
+          <label class="row"><span>Light power</span><input data-bind="light.intensity" type="range" min="0" max="6" step="0.1" /><output></output></label>
+          <label class="row"><span>Ambient</span><input data-bind="light.ambient" type="range" min="0" max="4" step="0.05" /><output></output></label>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Pixel-art style</summary>
+        <div class="sec">
+          <div id="stylePresets" class="styles"></div>
+          <p id="styleDesc" class="note"></p>
+          <div class="sub">Shading style</div>
+          <div id="shadeStyles" class="chips"></div>
+          <p id="shadeDesc" class="note"></p>
+          <div class="sub">Recommended sizes for <span id="subjectLabel"></span></div>
+          <div id="sizeChips" class="chips"></div>
+          <label class="row"><span>Width (X)</span><input data-bind="cell.w" type="range" min="24" max="1080" step="8" /><input data-bind="cell.w" class="numbox" type="number" min="4" max="1080" step="1" /></label>
+          <label class="row"><span>Height (Y)</span><input data-bind="cell.h" type="range" min="24" max="1080" step="8" /><input data-bind="cell.h" class="numbox" type="number" min="4" max="1080" step="1" /></label>
+          <p id="bigNote" class="note" hidden>Large sizes are slower to preview and make very big sheets — use “Packed grid” or the per-animation strips when exporting.</p>
+          <label class="row"><span>Padding (px)</span><input data-bind="cell.padding" type="number" min="0" max="32" step="1" /></label>
+          <label class="row"><span>Size applies to</span>
+            <select data-bind="cell.expand" data-bool>
+              <option value="true">The character (cell grows for big moves)</option>
+              <option value="false">The whole cell (everything must fit)</option>
+            </select>
+          </label>
+          <p id="cellNote" class="note" hidden></p>
+          <label class="row"><span>Anchor</span>
+            <select data-bind="cell.anchor"><option value="bottom">Feet on the bottom edge</option><option value="center">Centered</option></select>
+          </label>
+          <label class="row"><span>Palette</span><select data-bind="style.palette" id="selPalette"></select></label>
+          <label class="row"><span>Max colors</span><input data-bind="style.maxColors" type="number" min="2" max="256" step="1" /></label>
+          <label class="row" id="rowDepth"><span>Color depth</span><select data-bind="style.depth" id="selDepth"></select></label>
+          <label class="row"><span>Dithering</span><input data-bind="style.dither" type="range" min="0" max="1" step="0.05" /><output></output></label>
+          <label class="row"><span>Outline</span>
+            <select data-bind="style.outline"><option value="none">None</option><option value="outer">Outside (adds 1px)</option><option value="inner">Inside the shape</option></select>
+          </label>
+          <label class="row" id="rowOutlineColor"><span>Outline color</span>
+            <select data-bind="style.outlineColor"><option value="shaded">Shaded (coloured in light, black in shade)</option><option value="dark">Auto dark shade</option><option value="black">Black</option><option value="custom">Custom</option></select>
+            <input data-bind="style.customOutline" type="color" id="outlineCustom" />
+          </label>
+          <label class="check"><input data-bind="style.cleanup" type="checkbox" /> Clean stray pixels</label>
+          <div id="rampBox">
+            <div class="sub">Sprite shading</div>
+            <label class="row" title="How much of each colour area falls into its shadow shade."><span>Shadow area</span><input data-bind="style.rampShadow" type="range" min="0" max="1" step="0.02" /><output></output></label>
+            <label class="row" title="Size of the light patch on the side facing the light. 0 = none."><span>Highlight area</span><input data-bind="style.rampHighlight" type="range" min="0" max="1" step="0.02" /><output></output></label>
+            <label class="row" title="How far apart the shades of one colour are. 1 = as on hand-drawn DS sprites."><span>Shade contrast</span><input data-bind="style.rampContrast" type="range" min="0.4" max="2" step="0.05" /><output></output></label>
+            <label class="row" title="Shadows drift toward blue-violet and highlights toward yellow by up to this many degrees."><span>Hue shift</span><input data-bind="style.rampHue" type="range" min="0" max="40" step="1" /><output></output></label>
+            <label class="row" title="Shadows that one body part throws on another (head on chest, arm on belly). 0 = off."><span>Cast shadows</span><input data-bind="style.castShadow" type="range" min="0" max="1" step="0.05" /><output></output></label>
+            <label class="row" title="Checkerboard dots where two tones of a colour meet, as on Game Boy Advance sprites. 0 = clean borders."><span>Shade dither</span><input data-bind="style.rampDither" type="range" min="0" max="1" step="0.05" /><output></output></label>
+            <label class="check" title="The deepest tone runs along the outline on the side away from the light, which rounds the form."><input data-bind="style.rampEdge" type="checkbox" /> Deep shadow along the shaded contour</label>
+          </div>
+          <div class="sub">Eyes &amp; mouth</div>
+          <label class="row" title="Eye and mouth pixels win over the skin around them when the sprite is shrunk. Higher = larger, clearer eyes."><span>Eye emphasis</span><input data-bind="style.eyes" type="range" min="0" max="1" step="0.05" /><output></output></label>
+          <label class="check" title="Keeps one white pixel in each eye where its highlight is."><input data-bind="style.eyeLight" type="checkbox" /> Eye sparkle (white highlight pixel)</label>
+          <label class="check" title="The face is captured separately at a much larger size and its thin strokes (closed eyes, mouth lines, small pupils) are redrawn on the sprite as clean one-pixel lines."><input data-bind="style.faceLines" type="checkbox" /> Redraw face lines (separate face pass)</label>
+          <div id="eyeBuildBox">
+            <label class="check" title="Eyes are constructed the way sprite artists draw them instead of being shrunk: pupil, white and iris each keep a pixel, with a highlight on the side of the light."><input data-bind="style.eyeBuilder" type="checkbox" /> Build eyes like hand-drawn sprites</label>
+            <label class="row" id="rowEyeSize" title="Sprite eyes are drawn larger than on the model. 1 = true size."><span>Eye size</span><input data-bind="style.eyeSize" type="range" min="1" max="2" step="0.05" /><output></output></label>
+            <label class="check" id="rowEyeRim" title="A dark line around white eyes and above coloured ones, so they stand out from the skin."><input data-bind="style.eyeRim" type="checkbox" /> Dark rim around eyes</label>
+          </div>
+          <div class="sub">Sharpness</div>
+          <label class="row"><span>Inner lines</span>
+            <select data-bind="style.innerLines">
+              <option value="off">Off</option>
+              <option value="depth">Between body parts</option>
+              <option value="both">Body parts + creases</option>
+            </select>
+          </label>
+          <label class="row" id="rowLineStrength"><span>Line amount</span><input data-bind="style.lineStrength" type="range" min="0" max="1" step="0.05" /><output></output></label>
+          <label class="row"><span>Keep details</span><input data-bind="style.detail" type="range" min="0" max="1" step="0.05" /><output></output></label>
+          <label class="row"><span>Sharpen</span><input data-bind="style.sharpen" type="range" min="0" max="1.5" step="0.05" /><output></output></label>
+          <div class="sub">Anti-aliasing</div>
+          <label class="check" title="On: borders between colors get in-between palette shades. Off: every pixel takes one clean color."><input data-bind="style.aaPalette" type="checkbox" /> Blend color borders (palette shades)</label>
+          <label class="check" title="Edge pixels become partly transparent. Needs a translucent sprite material in Unreal."><input data-bind="style.aaAlpha" type="checkbox" /> Soft transparent edges (alpha)</label>
+          <details class="inner">
+            <summary>Fine tuning</summary>
+            <label class="row"><span>Supersampling</span>
+              <select data-bind="style.supersample" data-num><option value="1">1× (crisp, noisy)</option><option value="2">2×</option><option value="4">4×</option><option value="8">8× (smoothest)</option></select>
+            </label>
+            <label class="row"><span>Edge coverage</span><input data-bind="style.alphaThreshold" type="range" min="0.1" max="0.9" step="0.05" /><output></output></label>
+            <label class="row"><span>Brightness</span><input data-bind="style.brightness" type="range" min="-0.5" max="0.5" step="0.01" /><output></output></label>
+            <label class="row"><span>Contrast</span><input data-bind="style.contrast" type="range" min="-0.5" max="1" step="0.01" /><output></output></label>
+            <label class="row"><span>Saturation</span><input data-bind="style.saturation" type="range" min="0" max="2" step="0.01" /><output></output></label>
+          </details>
+          <div class="sub">Palette in use <span id="palCount" class="badge"></span></div>
+          <div id="swatches" class="swatches"></div>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Export (Unreal Engine · Paper2D)</summary>
+        <div class="sec">
+          <label class="row"><span>Asset name</span><input data-bind="export.name" type="text" spellcheck="false" /></label>
+          <label class="row"><span>Layout</span>
+            <select data-bind="export.layout"><option value="rows">One row per animation</option><option value="grid">Packed grid</option></select>
+          </label>
+          <label class="row" id="rowColumns"><span>Columns</span><input data-bind="export.columns" type="number" min="1" max="64" step="1" /></label>
+          <label class="row"><span>Spacing (px)</span><input data-bind="export.spacing" type="number" min="0" max="16" step="1" /></label>
+          <label class="row"><span>Scale</span>
+            <select data-bind="export.scale" data-num><option value="1">1× (true pixels)</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select>
+          </label>
+          <label class="check"><input data-bind="export.pot" type="checkbox" /> Pad sheet to power-of-two size</label>
+          <label class="check" title="A second sheet with the surface direction of every pixel, so the sprite reacts to lights in the game."><input data-bind="export.normal" type="checkbox" /> Also export a normal map sheet</label>
+          <label class="row" id="rowNormalY"><span>Normal map green</span>
+            <select data-bind="export.normalY"><option value="dx">Unreal / DirectX (Y−)</option><option value="gl">OpenGL / Unity (Y+)</option></select>
+          </label>
+          <button id="btnExport2" class="btn primary wide">Create sprite sheet</button>
+        </div>
+      </details>
+    </aside>
+
+    <section class="stage">
+      <div class="views">
+        <div class="pane" id="pane3d">
+          <div class="panehead"><span>3D view</span><span class="mute">drag to orbit · wheel to zoom</span>
+            <span class="spacer"></span>
+            <button id="btnUseView" class="btn small accent" title="Make the sprite from exactly this viewing angle">📷 Use this view for the sprite</button>
+            <label class="check mini"><input id="showBones" type="checkbox" /> Bones</label>
+            <label class="check mini"><input id="showGrid" type="checkbox" checked /> Grid</label>
+          </div>
+          <canvas id="view3d"></canvas>
+          <div id="empty" class="empty">
+            <div class="emptybox">
+              <h2>Drop a 3D model here</h2>
+              <p>GLB, GLTF, FBX or OBJ — with or without animations.</p>
+              <p><button id="btnEmptyDemo" class="btn">Try the demo character</button></p>
+            </div>
+          </div>
+        </div>
+        <div class="pane" id="panePx">
+          <div class="panehead"><span>Pixel preview</span><span id="pxInfo" class="mute"></span>
+            <span class="spacer"></span>
+            <div class="seg mini" id="zoomSeg" title="Zoom (always sharp, never smoothed)"><button data-v="fit" class="on">Fit</button><button data-v="1">1×</button><button data-v="2">2×</button><button data-v="4">4×</button><button data-v="8">8×</button></div>
+            <div class="seg mini" id="bgSeg"><button data-v="checker" class="on">▦</button><button data-v="dark">Dark</button><button data-v="light">Light</button><button data-v="green">Green</button></div>
+          </div>
+          <div class="pxwrap checker" id="pxWrap"><div id="pxGrid" class="pxgrid"><figure class="tile"><canvas id="pixelCanvas" width="32" height="32"></canvas><figcaption hidden></figcaption></figure></div></div>
+          <div id="actualBox" class="actual checker"><canvas id="pxActual" width="32" height="32"></canvas><span>1× actual size</span></div>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <button id="btnPrev" class="btn icon" title="Previous frame">◀</button>
+        <button id="btnPlay" class="btn icon" title="Play / pause (Space)">❚❚</button>
+        <button id="btnNext" class="btn icon" title="Next frame">▶</button>
+        <input id="scrub" type="range" min="0" max="1" step="0.001" value="0" />
+        <span id="timeLabel" class="mono">—</span>
+        <label class="check mini" title="Preview only the frames that will be exported"><input data-bind="anim.stepped" type="checkbox" /> Exported frames only</label>
+        <label class="mini">Speed
+          <select data-bind="anim.speed" data-num><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1">1×</option><option value="2">2×</option></select>
+        </label>
+      </div>
+
+      <div class="strip">
+        <div class="striphead">
+          <span id="stripTitle">Frames</span>
+          <span class="spacer"></span>
+          <span class="tools" id="frameTools">
+            <label class="mini" title="Which moment of the 3D animation this frame shows">Moment
+              <input id="cellTime" type="range" min="0" max="1" step="0.01" value="0" /><span id="cellTimeOut" class="mono">0.00s</span></label>
+            <label class="mini" title="How many ticks this frame stays on screen">Hold <input id="cellHold" type="number" min="1" max="60" value="1" /></label>
+            <button id="cellLeft" class="btn small" title="Move this frame earlier">◀</button>
+            <button id="cellRight" class="btn small" title="Move this frame later">▶</button>
+            <button id="cellDup" class="btn small" title="Add a copy of this frame after it">Duplicate</button>
+            <button id="cellDel" class="btn small" title="Remove this frame">Delete</button>
+            <button id="cellClearPose" class="btn small ghost" title="Remove the bone pose stored on this frame">Clear pose</button>
+            <label class="mini" title="Playback speed of this animation">Speed <input id="entryFps" type="number" min="1" max="60" step="1" value="10" /> fps</label>
+            <button id="cellReset" class="btn small ghost" title="Back to evenly spaced frames">Reset</button>
+          </span>
+        </div>
+        <div class="stripscroll checker"><div class="stripinner" id="stripInner"><canvas id="stripCanvas" width="1" height="1"></canvas><div id="stripMark"></div><div id="track" class="track"></div></div></div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="exportDlg">
+    <div class="dlghead"><h3>Sprite sheet</h3><span id="sheetInfo" class="mute"></span><span class="spacer"></span><button id="dlgClose" class="btn icon">✕</button></div>
+    <div class="sheetwrap checker"><canvas id="sheetCanvas"></canvas></div>
+    <div id="sheetWarn" class="warn" hidden></div>
+    <div class="dlgfoot">
+      <button id="dlZip" class="btn primary">Download all (.zip)</button>
+      <button id="dlPng" class="btn">PNG only</button>
+      <button id="dlJson" class="btn">.paper2dsprites</button>
+      <button id="dlNormal" class="btn" hidden>Normal map PNG</button>
+      <span class="spacer"></span>
+      <details class="howto"><summary>How to import into Unreal Engine</summary><pre id="howtoText"></pre></details>
+    </div>
+  </dialog>
+
+  <div id="busy" hidden><div class="busybox"><div id="busyText">Working…</div><div class="bar"><div id="busyBar"></div></div></div></div>
+  <div id="dropOverlay" hidden><div>Drop model files to load</div></div>
+  <div id="toast" hidden></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

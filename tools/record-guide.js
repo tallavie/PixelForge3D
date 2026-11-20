@@ -2,7 +2,7 @@
 //
 //   1. npm run dev
 //   2. node tools/guide-receiver.cjs          (writes what the page sends into guide-out/)
-//   3. in the browser console on http://localhost:5183:
+//   3. in the browser console on http://localhost:5183/app/:
 //        const rec = await import('/tools/record-guide.js'); await rec.all();
 //   4. copy guide-out/*.gif to public/guide/
 //

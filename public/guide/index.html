@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="../icon.svg" />
   <title>PixelForge 3D — how to make a sprite sheet</title>
   <meta name="description" content="Five short steps from a 3D model to a pixel-art sprite sheet for Unreal Engine." />
   <style>
@@ -13,7 +14,7 @@
     header { border-bottom: 1px solid var(--line); background: var(--panel); }
     .wrap { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
     header .wrap { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-top: 14px; padding-bottom: 14px; }
-    .brand { font-weight: 700; font-size: 18px; margin-right: auto; }
+    .brand { color: var(--text); text-decoration: none; font-weight: 700; font-size: 18px; margin-right: auto; }
     .brand span { color: var(--accent); }
     .btn { display: inline-block; text-decoration: none; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--line); color: var(--text); background: #1f232e; }
     .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--ink); font-weight: 600; }
@@ -35,9 +36,10 @@
 <body>
   <header>
     <div class="wrap">
-      <div class="brand">PixelForge <span>3D</span></div>
+      <a class="brand" href="../" title="PixelForge 3D home page">PixelForge <span>3D</span></a>
       <a class="btn" href="https://github.com/tallavie/PixelForge3D">Source on GitHub</a>
-      <a class="btn primary" href="../">Open the app</a>
+      <a class="btn" href="../">Home page</a>
+      <a class="btn primary" href="../app/">Open the app</a>
     </div>
   </header>
 
@@ -107,7 +109,7 @@
 
     <footer>
       PixelForge 3D is free software under the GPL-3.0 licence. No game assets are included, and it is not affiliated with any game company.
-      <br /><a href="../">Open the app</a> · <a href="https://github.com/tallavie/PixelForge3D">Source and issues on GitHub</a>
+      <br /><a href="../">Home page</a> · <a href="../app/">Open the app</a> · <a href="https://github.com/tallavie/PixelForge3D">Source and issues on GitHub</a>
     </footer>
   </main>
 </body>

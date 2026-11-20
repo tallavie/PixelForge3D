@@ -38,7 +38,8 @@ export async function loadModelFiles(files) {
     if (kind === 'glb' || kind === 'gltf') {
       const loader = new GLTFLoader(manager);
       const draco = new DRACOLoader(manager);
-      draco.setDecoderPath(`${import.meta.env.BASE_URL}draco/`);
+      // the app page lives in app/, the decoder beside it in draco/
+      draco.setDecoderPath(new URL('../draco/', location.href).href);
       loader.setDRACOLoader(draco);
       loader.setMeshoptDecoder(MeshoptDecoder);
       const gltf = await loader.loadAsync(mainUrl);

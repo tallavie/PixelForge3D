@@ -3,7 +3,7 @@
 Turn a 3D model and its animations into a pixel-art sprite sheet, in the browser.
 Load a model, pick the animations and the camera angle, choose a look, and export a sheet that Unreal Engine (Paper2D) imports directly.
 
-**Try it online:** https://tallavie.github.io/PixelForge3D/
+**Website:** https://tallavie.github.io/PixelForge3D/ · **The app, online:** https://tallavie.github.io/PixelForge3D/app/
 
 Everything runs on your own computer. Models are never uploaded anywhere.
 
@@ -71,7 +71,7 @@ npm install
 npm run dev
 ```
 
-Then open http://localhost:5183. On Windows, `start.bat` does both steps and opens the browser.
+Then open http://localhost:5183/app/ for the app (http://localhost:5183 is the home page of the site). On Windows, `start.bat` does both steps and opens the app.
 
 `npm run build` writes a static site to `dist/` that works from any web server or subfolder.
 
@@ -99,6 +99,8 @@ If you convert models from a game, the rights to those models stay with their ow
 
   | File | What is in it |
   |---|---|
+  | `index.html` | The home page of the site |
+  | `app/index.html` | The page of the app |
   | `src/main.js` | The app: state, 3D view, timeline, materials panel, export |
   | `src/ramp.js` | Game-sprite shading: colour ramps, shading styles, the face pass and the eye builder, normal maps |
   | `src/pixel.js` | Classic pipeline: shrinking, palettes, dithering, outlines, anti-aliasing |
@@ -108,4 +110,5 @@ If you convert models from a game, the rights to those models stay with their ow
   | `src/exporter.js` | Sprite sheet, Paper2D file, ZIP |
   | `src/presets.js` | Palettes, styles, shading styles, recommended sizes |
   | `public/guide/` | The how-to page of the site and its recordings |
+  | `public/img/` | Pictures of the home page: sprite strips made by the app from the demo character |
   | `tools/` | Development only: records the how-to GIFs from the running app |
