@@ -1,4 +1,4 @@
-# Builds the app and publishes it to GitHub Pages whenever main changes.
+# Builds the site (home page, app and guide) and publishes it to GitHub Pages whenever main changes.
 name: Website
 
 on:
@@ -16,11 +16,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,5 +30,15 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
+  # A job of its own: when the deploy step ran right after the upload in one job,
+  # it sometimes did not find the artifact that had just been uploaded.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4
